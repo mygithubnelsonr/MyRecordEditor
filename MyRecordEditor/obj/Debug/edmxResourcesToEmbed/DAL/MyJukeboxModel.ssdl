@@ -1,0 +1,102 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="MyJukeboxModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="tCatalogs">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="12" />
+  </EntityType>
+  <EntityType Name="tGenres">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar" MaxLength="12" />
+  </EntityType>
+  <EntityType Name="tMD5">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="ID_Song" Type="int" Nullable="false" />
+    <Property Name="MD5" Type="nvarchar" MaxLength="32" Nullable="false" />
+  </EntityType>
+  <EntityType Name="tMedia">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Type" Type="nvarchar" MaxLength="12" />
+    <Property Name="Comment" Type="nvarchar" MaxLength="12" />
+  </EntityType>
+  <EntityType Name="tSongs">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Album" Type="nvarchar" MaxLength="50" />
+    <Property Name="Artist" Type="nvarchar" MaxLength="126" />
+    <Property Name="Titel" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Pfad" Type="nvarchar" MaxLength="254" />
+    <Property Name="FileName" Type="nvarchar" MaxLength="156" />
+    <Property Name="ID_Genre" Type="int" />
+    <Property Name="ID_Catalog" Type="int" />
+    <Property Name="ID_Media" Type="int" />
+  </EntityType>
+  <Association Name="FK_tSongsNew_tCatalogs">
+    <End Role="tCatalogs" Type="Self.tCatalogs" Multiplicity="0..1" />
+    <End Role="tSongs" Type="Self.tSongs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tCatalogs">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="tSongs">
+        <PropertyRef Name="ID_Catalog" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tSongsNew_tGenres">
+    <End Role="tGenres" Type="Self.tGenres" Multiplicity="0..1" />
+    <End Role="tSongs" Type="Self.tSongs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tGenres">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="tSongs">
+        <PropertyRef Name="ID_Genre" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_tSongsNew_tMedia">
+    <End Role="tMedia" Type="Self.tMedia" Multiplicity="0..1" />
+    <End Role="tSongs" Type="Self.tSongs" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="tMedia">
+        <PropertyRef Name="ID" />
+      </Principal>
+      <Dependent Role="tSongs">
+        <PropertyRef Name="ID_Media" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="MyJukeboxModelStoreContainer">
+    <EntitySet Name="tCatalogs" EntityType="Self.tCatalogs" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tGenres" EntityType="Self.tGenres" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tMD5" EntityType="Self.tMD5" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tMedia" EntityType="Self.tMedia" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="tSongs" EntityType="Self.tSongs" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_tSongsNew_tCatalogs" Association="Self.FK_tSongsNew_tCatalogs">
+      <End Role="tCatalogs" EntitySet="tCatalogs" />
+      <End Role="tSongs" EntitySet="tSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tSongsNew_tGenres" Association="Self.FK_tSongsNew_tGenres">
+      <End Role="tGenres" EntitySet="tGenres" />
+      <End Role="tSongs" EntitySet="tSongs" />
+    </AssociationSet>
+    <AssociationSet Name="FK_tSongsNew_tMedia" Association="Self.FK_tSongsNew_tMedia">
+      <End Role="tMedia" EntitySet="tMedia" />
+      <End Role="tSongs" EntitySet="tSongs" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

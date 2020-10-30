@@ -1,0 +1,79 @@
+﻿<Application x:Class="DbRecordEditor.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:DbRecordEditor"
+             StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <!-- Hintergrund für MainWindow -->
+        <LinearGradientBrush x:Key="WindowBackground" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="#FF0991C3"/>
+            <GradientStop Offset="0.5" Color="Blue"/>
+            <GradientStop Offset="1" Color="#FF1E74DA"/>
+        </LinearGradientBrush>
+        <!-- Hintergrund für Header von MainWindow -->
+        <LinearGradientBrush x:Key="HeaderBackground" StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Offset="0" Color="Blue"/>
+            <GradientStop Offset="0.7" Color="DarkBlue"/>
+            <GradientStop Offset="1" Color="#FF0991C3"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="HeaderBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#FF0078FF" Offset="0"/>
+            <GradientStop Color="#FF71B4FF" Offset="1"/>
+            <GradientStop Color="Blue" Offset="0.509"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="HeaderBorderBrush" StartPoint="0.5,0" EndPoint="0.5,1">
+            <GradientStop Color="#FF1D1D1D" Offset="0.614"/>
+            <GradientStop Color="#FF007F96" Offset="0.853"/>
+            <GradientStop Color="#FF0AEAFA" Offset="1"/>
+        </LinearGradientBrush>
+        
+        <Style x:Key="exitButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="WhiteSmoke"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="ToolTip" Value="Close"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="25"/>
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Standart Button Style  -->
+        <Style TargetType="Button">
+            <Setter Property="Width" Value="80"/>
+            <Setter Property="Height" Value="26"/>
+            <Setter Property="Margin" Value="10"/>
+            <Setter Property="Background" Value="#FF0737B8"/>
+            <Setter Property="Foreground" Value="AntiqueWhite"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}" CornerRadius="5"/>
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF18DEFD"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Gray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="nostyle" TargetType="Button">
+            
+        </Style>
+    </Application.Resources>
+</Application>
