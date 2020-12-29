@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace DbRecordEditor
 {
@@ -73,8 +74,8 @@ namespace DbRecordEditor
             {
                 try
                 {
-                    var id = Convert.ToInt32(textboxIDInput.Text);
-                    LoadData(id);
+                    ID = Convert.ToInt32(textboxIDInput.Text);
+                    LoadData(ID);
                 }
                 catch (FormatException ex)
                 {
@@ -228,15 +229,25 @@ namespace DbRecordEditor
 
             Genre genre = (Genre)comboboxGenres.SelectedItem;
             mp3Record.ID_Genre = genre.ID;
-
             mp3Record.ID_Catalog = _idcatalog;
 
             bool result = DataGetSet.EditSaveSongChanges(ID, mp3Record);
 
+            statusSavedGreen.Visibility = Visibility.Hidden;
+            statusSavedRed.Visibility = Visibility.Hidden;
+
             if (result == true)
-                MessageBox.Show("successfully save changes.", "INFO: Save Data");
+            {
+                statusbarSavedContent.Visibility = Visibility.Visible;
+                statusbarSaved.Visibility = Visibility.Visible;
+                statusSavedGreen.Visibility = Visibility.Visible;
+            }
             else
-                MessageBox.Show("save changes failed1", "ERROR: Save Data");
+            {
+                statusbarSavedContent.Visibility = Visibility.Visible;
+                statusbarSaved.Visibility = Visibility.Visible;
+                statusSavedRed.Visibility = Visibility.Visible;
+            }
 
             LoadData(ID);
         }
@@ -244,6 +255,7 @@ namespace DbRecordEditor
         private void Record_TextChanged(object sender, TextChangedEventArgs e)
         {
             IsSongChanged = true;
+            statusSigne.Fill = Brushes.Red;
             statusbarChanged.Visibility = Visibility.Visible;
         }
 

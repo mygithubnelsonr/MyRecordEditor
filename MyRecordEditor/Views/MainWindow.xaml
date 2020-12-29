@@ -7,7 +7,7 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="DbRecordEditor.MainWindow"
         mc:Ignorable="d"
         Title="My Record Editor" Height="414" Width="480" WindowStartupLocation="CenterScreen"
-                    Background="{StaticResource WindowBackground}" WindowStyle="None" SizeToContent="Height" ResizeMode="CanResize" 
+                    Background="{StaticResource WindowBackground}" WindowStyle="None" SizeToContent="WidthAndHeight" ResizeMode="CanResize" 
                     MouseLeftButtonDown="Move_Window" Loaded="Window_Loaded">
     <Window.Resources>
         <!--Style for Textbox-->
@@ -51,24 +51,34 @@
             <Separator/>
             <StatusBarItem Content="Changed: "/>
             <StatusBarItem x:Name="statusbarChanged" Width="18" Visibility="Hidden">
-                <Ellipse Fill="Red" Width="10" Height="10"/>
+                <Ellipse x:Name="statusSigne" Fill="Red" Width="10" Height="10"/>
             </StatusBarItem>
             <Separator/>
             <StatusBarItem Content="" Width="20"></StatusBarItem>
-            <StatusBarItem Content="" Width="210" />
-            <StatusBarItem Content="Version:" HorizontalAlignment="Right"/>
-            <StatusBarItem x:Name="statusVersion" Content="0.9.0" HorizontalAlignment="Right"/>
+            <StatusBarItem x:Name="statusbarSavedContent" Content="Saved: " Visibility="Hidden"/>
+            <StatusBarItem x:Name="statusbarSaved" Visibility="Hidden">
+                <StackPanel Orientation="Horizontal">
+                    <Ellipse x:Name="statusSavedGreen" Fill="LightGreen" Width="10" Height="10" Visibility="Hidden"/>
+                    <Ellipse x:Name="statusSavedRed" Fill="Red" Width="10" Height="10" Visibility="Hidden"/>
+                </StackPanel>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Width="94" HorizontalAlignment="Right">
+                    <TextBlock Text="Version: " FontSize="12" FontWeight="Normal"/>
+                    <TextBlock x:Name="statusVersion" Text="0.9.2" FontSize="12" FontWeight="Normal" HorizontalAlignment="Right"/>
+                </StackPanel>
+            </StatusBarItem>
         </StatusBar>
         <StackPanel>
             <Grid DockPanel.Dock="Top" x:Name="Header" Height="50"  Background="{StaticResource HeaderBackground}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="34"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Image Grid.Column="1" Source="/Views/EditRecord.ico" Width="32" Height="32"/>
+                <Image Grid.Column="1" Source="/Images/EditRecord.ico" Width="32" Height="32"/>
 
                 <StackPanel Grid.Column="2" Margin="10 4" HorizontalAlignment="Center">
                     <TextBlock x:Name="textblockHeader" FontSize="26" FontFamily="Arial" Foreground="WhiteSmoke">
@@ -94,15 +104,17 @@
                         </Rectangle.OpacityMask>
                     </Rectangle>
                 </StackPanel>
-                <Button Grid.Column="3" x:Name="buttonMinimize" IsCancel="True" Style="{StaticResource exitButton}"
-                    VerticalAlignment="Top" Command="SystemCommands.MinimizeWindowCommand">
-                    <Button.Content>
-                            <Rectangle Width="18" Height="5" Fill="White"/>
-                    </Button.Content>
-                </Button>
-                <Button Grid.Column="4" x:Name="buttonClose" Content="X" IsCancel="True" Style="{StaticResource exitButton}"
-                    VerticalAlignment="Top" Command="ApplicationCommands.Close">
-                </Button>
+                <StackPanel Grid.Column="3" Orientation="Horizontal">
+                    <Button x:Name="buttonMinimize" Margin="4" IsCancel="True" Style="{StaticResource exitButton}"
+                        HorizontalAlignment="Left" Command="SystemCommands.MinimizeWindowCommand">
+                        <Button.Content>
+                                <Rectangle Width="18" Height="5" Fill="White"/>
+                        </Button.Content>
+                    </Button>
+                    <Button x:Name="buttonClose" Content="X" Margin="4" IsCancel="True" Style="{StaticResource exitButton}"
+                        HorizontalAlignment="Right" Command="ApplicationCommands.Close">
+                    </Button>
+                </StackPanel>
             </Grid>
             <StackPanel Margin="10 4 10 0" Background="LightGray" Height="321">
                 <StackPanel Orientation="Horizontal" Margin="4">
