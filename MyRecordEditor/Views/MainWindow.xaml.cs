@@ -1,11 +1,13 @@
-﻿using DbRecordEditor.BLL;
+﻿using MyRecordEditor.DataAccess;
+using MyRecordEditor.Model;
 using System;
+using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace DbRecordEditor
+namespace MyRecordEditor
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -14,10 +16,14 @@ namespace DbRecordEditor
     {
         #region Fields
         private int _idsong;
+        private int _index = 0;
         private int _idgenre;
         private int _idcatalog;
+        private int _idmedia;
         private bool IsSongChanged = false;
-        private MP3Record mp3Record = new MP3Record();
+        private tSongsModel songrecord;
+        private ArrayList _ids = new ArrayList();
+
         #endregion
 
         #region Properties
@@ -36,17 +42,20 @@ namespace DbRecordEditor
             InitializeComponent();
             FillComboGenres();
             FillComboCatalogs();
+            FillComboMedias();
         }
         #endregion
 
         #region Control Events
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            var p = Environment.GetCommandLineArgs();
+            string[] p = Environment.GetCommandLineArgs();
 
             if (p.Length > 1)
             {
-                ID = Convert.ToInt32(p[1]);
+                _ids.AddRange(p);
+                _ids.RemoveAt(0);
+                _idsong = Convert.ToInt32(_ids[_index]);
                 LoadData(_idsong);
             }
 
@@ -68,6 +77,32 @@ namespace DbRecordEditor
             this.Close();
         }
 
+        private void buttonNext_Click(object sender, RoutedEventArgs e)
+        {
+            if (_index < _ids.Count - 1)
+            {
+                _index++;
+                LoadData(Convert.ToInt32(_ids[_index]));
+                statusbarSavedContent.Visibility = Visibility.Hidden;
+                statusSavedGreen.Visibility = Visibility.Hidden;
+                statusSavedRed.Visibility = Visibility.Hidden;
+                ID = Convert.ToInt32(textboxIDInput.Text);
+            }
+        }
+
+        private void buttonPrev_Click(object sender, RoutedEventArgs e)
+        {
+            if (_index > 0)
+            {
+                _index--;
+                LoadData(Convert.ToInt32(_ids[_index]));
+                statusbarSavedContent.Visibility = Visibility.Hidden;
+                statusSavedGreen.Visibility = Visibility.Hidden;
+                statusSavedRed.Visibility = Visibility.Hidden;
+                ID = Convert.ToInt32(textboxIDInput.Text);
+            }
+        }
+
         private void textboxIDInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -84,17 +119,27 @@ namespace DbRecordEditor
             }
         }
 
-        private void comboboxGenres_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void comboboxGenres_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Genre genre = (Genre)comboboxGenres.SelectedItem;
+            tGenresModel genre = (tGenresModel)comboboxGenres.SelectedItem;
             _idgenre = genre.ID;
+            songrecord.ID_Genre = _idgenre;
             IsSongChanged = true;
         }
 
         private void comboboxCatalogs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Catalog catalog = (Catalog)comboboxCatalogs.SelectedItem;
+            tCatalogsModel catalog = (tCatalogsModel)comboboxCatalogs.SelectedItem;
             _idcatalog = catalog.ID;
+            songrecord.ID_Catalog = _idcatalog;
+            IsSongChanged = true;
+        }
+
+        private void comboboxMediass_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            tMediasModel media = (tMediasModel)comboboxMedias.SelectedItem;
+            _idmedia = media.ID;
+            songrecord.ID_Media = _idmedia;
             IsSongChanged = true;
         }
 
@@ -111,51 +156,57 @@ namespace DbRecordEditor
         private void textboxArtist_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsSongChanged)
-                mp3Record.Artist = textboxArtist.Text;
+                songrecord.Artist = textboxArtist.Text;
         }
 
         private void textboxAlbum_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsSongChanged)
-                mp3Record.Album = textboxAlbum.Text;
+                songrecord.Album = textboxAlbum.Text;
         }
 
         private void textboxTitle_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsSongChanged)
-                mp3Record.Titel = textboxTitle.Text;
+                songrecord.Title = textboxTitle.Text;
         }
 
         private void textboxPath_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsSongChanged)
-                mp3Record.Path = textboxPath.Text;
+                songrecord.Path = textboxPath.Text;
         }
 
         private void textboxFilename_LostFocus(object sender, RoutedEventArgs e)
         {
             if (IsSongChanged)
-                mp3Record.FileName = textboxFilename.Text;
+                songrecord.FileName = textboxFilename.Text;
         }
         #endregion
 
         #region Methods
         private void FillComboGenres()
         {
-            var genres = DataGetSet.GetGenres();
+            var genres = DataAccess.GetSetData.GetGenres();
             comboboxGenres.ItemsSource = genres;
         }
 
         private void FillComboCatalogs()
         {
-            var catalogs = DataGetSet.GetCatalogs();
+            var catalogs = GetSetData.GetCatalogs();
             comboboxCatalogs.ItemsSource = catalogs;
+        }
+
+        private void FillComboMedias()
+        {
+            var medias = GetSetData.GetMedias();
+            comboboxMedias.ItemsSource = medias;
         }
 
         private int ListGenreIndex(int idgenre)
         {
             int index = -1;
-            foreach (Genre item in comboboxGenres.Items)
+            foreach (tGenresModel item in comboboxGenres.Items)
             {
                 index++;
                 if (item.ID == _idgenre)
@@ -168,7 +219,7 @@ namespace DbRecordEditor
         private int ListCatalogIndex(int idcatalog)
         {
             int index = -1;
-            foreach (Catalog item in comboboxCatalogs.Items)
+            foreach (tCatalogsModel item in comboboxCatalogs.Items)
             {
                 index++;
                 if (item.ID == _idcatalog)
@@ -178,39 +229,87 @@ namespace DbRecordEditor
             return index;
         }
 
-        private void LoadData(int ID)
+        private int ListMediaIndex(int idmedia)
         {
-            mp3Record = new MP3Record();
-            mp3Record = DataGetSet.GetRecord(ID);
-
-            this.DataContext = mp3Record;
-
-            if (mp3Record != null)
+            int index = -1;
+            foreach (tMediasModel item in comboboxMedias.Items)
             {
-                textboxIDInput.Text = ID.ToString();
-                statusbarID.Content = ID.ToString();
-
-                textboxAlbum.Text = mp3Record.Album;
-                textboxArtist.Text = mp3Record.Artist;
-                textboxTitle.Text = mp3Record.Titel;
-                textboxPath.Text = mp3Record.Path;
-                textboxFilename.Text = mp3Record.FileName;
-
-                _idgenre = mp3Record.ID_Genre;
-                int index = ListGenreIndex(_idgenre);
-                comboboxGenres.SelectedIndex = index;
-
-                _idcatalog = mp3Record.ID_Catalog;
-                index = ListCatalogIndex(_idcatalog);
-                comboboxCatalogs.SelectedIndex = index;
-                mp3Record.Initialize();
+                index++;
+                if (item.ID == _idmedia)
+                    break;
             }
-            else
-            {
-                MessageBox.Show($"Record ID {ID} not found!", "ERROR: Load Data!");
-            }
-            IsSongChanged = false;
-            statusbarChanged.Visibility = Visibility.Hidden;
+
+            return index;
+        }
+
+        //private int GetIndex(int id)
+        //{
+        //    ObservableCollection<tMediasModel> items = new ObservableCollection<tMediasModel>(comboboxMedias.ItemsSource);
+
+        //    items.Any(i => i.Contains(id));
+
+
+        //}
+
+
+        //private void LoadData(int ID)
+        //{
+        //    mp3Record = new MP3Record();
+        //    mp3Record = DataGetSet.GetRecord(ID);
+
+        //    this.DataContext = mp3Record;
+
+        //    if (mp3Record != null)
+        //    {
+        //        textboxIDInput.Text = ID.ToString();
+        //        statusbarID.Content = ID.ToString();
+
+        //        textboxAlbum.Text = mp3Record.Album;
+        //        textboxArtist.Text = mp3Record.Artist;
+        //        textboxTitle.Text = mp3Record.Titel;
+        //        textboxPath.Text = mp3Record.Path;
+        //        textboxFilename.Text = mp3Record.FileName;
+
+        //        _idgenre = mp3Record.ID_Genre;
+        //        int index = ListGenreIndex(_idgenre);
+        //        comboboxGenres.SelectedIndex = index;
+        //        comboboxGenres.SelectedItem = index;
+
+        //        _idcatalog = mp3Record.ID_Catalog;
+        //        index = ListCatalogIndex(_idcatalog);
+        //        comboboxCatalogs.SelectedIndex = index;
+        //        mp3Record.Initialize();
+        //    }
+        //    else
+        //    {
+        //        MessageBox.Show($"Record ID {ID} not found!", "ERROR: Load Data!");
+        //    }
+        //    IsSongChanged = false;
+        //    statusbarChanged.Visibility = Visibility.Hidden;
+        //}
+
+        private void LoadData(int id)
+        {
+            int index = -1;
+
+            songrecord = new tSongsModel();
+
+            songrecord = GetSetData.GetSongModel(id);
+            this.DataContext = songrecord;
+
+            _idgenre = songrecord.ID_Genre;
+            index = ListGenreIndex(_idgenre);
+            comboboxGenres.SelectedIndex = index;
+            comboboxGenres.SelectedItem = index;
+
+            _idcatalog = songrecord.ID_Catalog;
+            index = ListCatalogIndex(_idcatalog);
+            comboboxCatalogs.SelectedIndex = index;
+
+            _idmedia = songrecord.ID_Media;
+            index = ListMediaIndex(_idmedia);
+            comboboxMedias.SelectedIndex = index;
+
         }
 
         private void SaveData()
@@ -221,17 +320,9 @@ namespace DbRecordEditor
                 return;
             }
 
-            mp3Record.Album = textboxAlbum.Text;
-            mp3Record.Artist = textboxArtist.Text;
-            mp3Record.Titel = textboxTitle.Text;
-            mp3Record.Path = textboxPath.Text;
-            mp3Record.FileName = textboxFilename.Text;
+            tGenresModel genre = (tGenresModel)comboboxGenres.SelectedItem;
 
-            Genre genre = (Genre)comboboxGenres.SelectedItem;
-            mp3Record.ID_Genre = genre.ID;
-            mp3Record.ID_Catalog = _idcatalog;
-
-            bool result = DataGetSet.EditSaveSongChanges(ID, mp3Record);
+            bool result = GetSetData.SaveChanges(songrecord);
 
             statusSavedGreen.Visibility = Visibility.Hidden;
             statusSavedRed.Visibility = Visibility.Hidden;
@@ -260,5 +351,6 @@ namespace DbRecordEditor
         }
 
         #endregion
+
     }
 }

@@ -1,13 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{F883C371-7FA8-484E-9445-1756F7EB5F21}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>DbRecordEditor</RootNamespace>
+    <RootNamespace>MyRecordEditor</RootNamespace>
     <AssemblyName>MyRecordEditor</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -18,7 +17,7 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>\\win2k16dc01\SDPA\03 Application\Deploy\DbRecordEditor\</PublishUrl>
+    <PublishUrl>\\win2k16dc01\SDPA\03 Application\Deploy\MyRecordEditor\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Unc</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -30,7 +29,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
     <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>6</ApplicationRevision>
+    <ApplicationRevision>17</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -68,19 +67,16 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>EditRecord.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.78\lib\net461\Dapper.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -110,41 +106,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="BLL\Catalog.cs" />
-    <Compile Include="BLL\DataGetSet.cs" />
-    <Compile Include="BLL\Genre.cs" />
-    <Compile Include="BLL\Mp3Record.cs" />
-    <Compile Include="Commands\DbRecordEditorCommands.cs" />
-    <Compile Include="DAL\MyJukeboxModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyJukeboxModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\MyJukeboxModel.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\MyJukeboxModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MyJukeboxModel.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\tCatalog.cs">
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\tGenre.cs">
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\tMD5.cs">
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\tMedia.cs">
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DAL\tSong.cs">
-      <DependentUpon>MyJukeboxModel.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Commands\MyRecordEditorCommands.cs" />
+    <Compile Include="DataAccess\ConnectionTools.cs" />
+    <Compile Include="DataAccess\GetSetData.cs" />
+    <Compile Include="Model\tCatalogsModel.cs" />
+    <Compile Include="Model\tGenresModel.cs" />
+    <Compile Include="Model\tMediasModel.cs" />
+    <Compile Include="Model\tSongsModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -168,14 +136,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EntityDeploy Include="DAL\MyJukeboxModel.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>MyJukeboxModel.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <None Include="DAL\MyJukeboxModel.edmx.diagram">
-      <DependentUpon>MyJukeboxModel.edmx</DependentUpon>
-    </None>
-    <None Include="MyRecordEditor_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -198,28 +158,12 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DAL\MyJukeboxModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MyJukeboxModel.edmx</DependentUpon>
-      <LastGenOutput>MyJukeboxModel.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="DAL\MyJukeboxModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>MyJukeboxModel.edmx</DependentUpon>
-      <LastGenOutput>MyJukeboxModel.cs</LastGenOutput>
-    </Content>
+    <Resource Include="EditRecord.ico" />
     <Resource Include="Images\EditRecord.ico" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
-    <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
-  </Target>
-  <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
 </Project>

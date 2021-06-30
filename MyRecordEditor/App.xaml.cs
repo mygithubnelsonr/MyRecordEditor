@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace DbRecordEditor
+namespace MyRecordEditor
 {
     /// <summary>
     /// Interaction logic for App.xaml

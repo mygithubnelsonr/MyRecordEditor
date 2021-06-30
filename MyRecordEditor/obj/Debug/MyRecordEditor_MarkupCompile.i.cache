@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-A:\Source\Repos\90_Work\WPF\MyTools\MyRecordEditor\MyRecordEditor\obj\Debug\
-DbRecordEditor
+A:\Source\Repos\90_Work\03_WPF\MyTools\MyRecordEditor\MyRecordEditor\obj\Debug\
+MyRecordEditor
 none
 false
 DEBUG;TRACE
-A:\Source\Repos\90_Work\WPF\MyTools\MyRecordEditor\MyRecordEditor\App.xaml
+A:\Source\Repos\90_Work\03_WPF\MyTools\MyRecordEditor\MyRecordEditor\App.xaml
 11892971807
-2-1000094962
-19456063827
-19-2038531162
+
+13145959039
+19-1629241777
 Views\MainWindow.xaml;
 
 True

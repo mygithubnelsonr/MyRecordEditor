@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:DbRecordEditor"
-        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="DbRecordEditor.MainWindow"
+        xmlns:local="clr-namespace:MyRecordEditor"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="MyRecordEditor.MainWindow"
         mc:Ignorable="d"
-        Title="My Record Editor" Height="414" Width="480" WindowStartupLocation="CenterScreen"
+        Title="My Record Editor" Height="414" Width="520" WindowStartupLocation="CenterScreen"
                     Background="{StaticResource WindowBackground}" WindowStyle="None" SizeToContent="WidthAndHeight" ResizeMode="CanResize" 
                     MouseLeftButtonDown="Move_Window" Loaded="Window_Loaded">
     <Window.Resources>
@@ -18,7 +18,7 @@
             <Setter Property="MinWidth" Value="100"/>
             <Setter Property="Margin" Value="4 0"/>
         </Style>
-        <!--Style for TextBlock-->
+        <!--Style for Filed TextBlock-->
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="FontSize" Value="16"/>
             <Setter Property="FontWeight" Value="Bold"/>
@@ -27,6 +27,7 @@
             <Setter Property="Margin" Value="4 0"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
         </Style>
+        <Style x:Key="texblockNoStyle" TargetType="TextBlock"></Style>
         <Style x:Key="FocusVisual">
             <Setter Property="Control.Template">
                 <Setter.Value>
@@ -40,7 +41,7 @@
     <Window.CommandBindings>
         <CommandBinding Command="ApplicationCommands.Close" Executed="CommandClose_Executed"/>
         <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" Executed="CommandMinimize_Executed" />
-        <CommandBinding Command="{x:Static local:DbRecordEditorCommands.CommandSave}"
+        <CommandBinding Command="{x:Static local:MyRecordEditorCommands.CommandSave}"
                         CanExecute="CommandSave_CanExecute"
                         Executed="CommandSave_Executed"/>
     </Window.CommandBindings>
@@ -64,9 +65,10 @@
             </StatusBarItem>
             <Separator/>
             <StatusBarItem HorizontalAlignment="Right">
-                <StackPanel Orientation="Horizontal" Width="94" HorizontalAlignment="Right">
-                    <TextBlock Text="Version: " FontSize="12" FontWeight="Normal"/>
-                    <TextBlock x:Name="statusVersion" Text="0.9.2" FontSize="12" FontWeight="Normal" HorizontalAlignment="Right"/>
+                <StackPanel Orientation="Horizontal" Width="80" HorizontalAlignment="Right">
+                    <TextBlock Text="Version: " Style="{StaticResource texblockNoStyle}" FontSize="12" FontWeight="Normal"/>
+                    <TextBlock x:Name="statusVersion" Text="2.1.0" Style="{StaticResource texblockNoStyle}"
+                               FontSize="12" FontWeight="Normal" TextAlignment="Right" HorizontalAlignment="Right"/>
                 </StackPanel>
             </StatusBarItem>
         </StatusBar>
@@ -79,20 +81,19 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <Image Grid.Column="1" Source="/Images/EditRecord.ico" Width="32" Height="32"/>
-
-                <StackPanel Grid.Column="2" Margin="10 4" HorizontalAlignment="Center">
-                    <TextBlock x:Name="textblockHeader" FontSize="26" FontFamily="Arial" Foreground="WhiteSmoke">
-                        <Bold FontWeight="ExtraBold">My</Bold>
-                        <Run FontWeight="ExtraBold" FontSize="24" Foreground="Red">Record</Run>
-                        <Italic>Editor</Italic>
-                    </TextBlock>
-                    <Rectangle Height="15" Width="192">
+                <StackPanel Grid.Column="2" Margin="10 0" HorizontalAlignment="Left" Width="220">
+                    <StackPanel x:Name="textblockHeader" Orientation="Horizontal">
+                        <TextBlock Text="My" Foreground="LightGray" FontSize="26" FontWeight="Bold"/>
+                        <TextBlock Text="R" Margin="-20 0 0 0" FontFamily="Arial" FontWeight="ExtraBold" FontSize="34" FontStyle="Italic" Foreground="Red"/>
+                        <TextBlock Text="ecordEditor" Margin="-22 0 0 0" FontSize="26" Foreground="LightGray"/>
+                    </StackPanel>
+                    <Rectangle Height="15" Margin="10 -6 0 0">
                         <Rectangle.Fill>
                             <VisualBrush Visual="{Binding ElementName=textblockHeader}"/>
                         </Rectangle.Fill>
                         <Rectangle.LayoutTransform>
                             <TransformGroup>
-                                <SkewTransform AngleX="-15"/>
+                                <SkewTransform AngleX="-1"/>
                                 <ScaleTransform ScaleY="-1"/>
                             </TransformGroup>
                         </Rectangle.LayoutTransform>
@@ -108,7 +109,7 @@
                     <Button x:Name="buttonMinimize" Margin="4" IsCancel="True" Style="{StaticResource exitButton}"
                         HorizontalAlignment="Left" Command="SystemCommands.MinimizeWindowCommand">
                         <Button.Content>
-                                <Rectangle Width="18" Height="5" Fill="White"/>
+                            <Rectangle Width="18" Height="5" Fill="White"/>
                         </Button.Content>
                     </Button>
                     <Button x:Name="buttonClose" Content="X" Margin="4" IsCancel="True" Style="{StaticResource exitButton}"
@@ -117,67 +118,109 @@
                 </StackPanel>
             </Grid>
             <StackPanel Margin="10 4 10 0" Background="LightGray" Height="321">
-                <StackPanel Orientation="Horizontal" Margin="4">
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="ID"/>
-                        <!--<TextBox x:Name="textboxID" IsReadOnly="True" Visibility="Hidden"/>-->
-                        <TextBox x:Name="textboxIDInput" Text="" KeyDown="textboxIDInput_KeyDown"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Genre"/>
-                        <ComboBox x:Name="comboboxGenres" Width="140" Foreground="DarkBlue" SelectionChanged="comboboxGenres_SelectionChanged">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Name}" Margin="4 0 0 0"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Catalog"/>
-                        <ComboBox x:Name="comboboxCatalogs" Width="140" Foreground="DarkBlue" SelectionChanged="comboboxCatalogs_SelectionChanged">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="{Binding Name}" Margin="4 0 0 0 "/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="4">
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Album"/>
-                        <TextBox x:Name="textboxAlbum" TextChanged="Record_TextChanged" LostFocus="textboxAlbum_LostFocus"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Artist"/>
-                        <TextBox x:Name="textboxArtist" TextChanged="Record_TextChanged" LostFocus="textboxArtist_LostFocus"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="4">
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Title"/>
-                        <TextBox x:Name="textboxTitle" TextChanged="Record_TextChanged" LostFocus="textboxTitle_LostFocus"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="4">
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Path"/>
-                        <TextBox x:Name="textboxPath" TextChanged="Record_TextChanged" LostFocus="textboxPath_LostFocus"/>
-                    </StackPanel>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="4">
-                    <StackPanel Orientation="Vertical" Margin="4">
-                        <TextBlock Text="Filename" Width="78"/>
-                        <TextBox x:Name="textboxFilename" TextChanged="Record_TextChanged" LostFocus="textboxFilename_LostFocus"/>
-                    </StackPanel>
-                </StackPanel>
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="95"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Row="1" x:Name="buttonPrev" Content="3" Height="22" Margin="6 0 0 0" FontFamily="WebDings" FontWeight="Bold"
+                        Style="{StaticResource nostyle}" Click="buttonPrev_Click"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="ID"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="textboxIDInput" Text="{Binding Path=ID}" Height="24" Margin="4 0 0 0" TabIndex="0"
+                                VerticalContentAlignment="Center" KeyDown="textboxIDInput_KeyDown"/>
+                    <Button Grid.Row="1" Grid.Column="2" x:Name="buttonNext" Content="4" Height="22" Margin="4 0" FontFamily="WebDings" FontWeight="Bold"
+                        Style="{StaticResource nostyle}" Click="buttonNext_Click"/>
+                    <TextBlock Grid.Row="0" Grid.Column="3" Text="Genre"/>
+                    <ComboBox Grid.Row="1" Grid.Column="3" x:Name="comboboxGenres" Margin="4 0 0 0" Foreground="DarkBlue" SelectionChanged="comboboxGenres_SelectionChanged" TabIndex="1">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" Margin="4 0 0 0"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Catalog"/>
+                    <ComboBox Grid.Row="1" Grid.Column="4" x:Name="comboboxCatalogs" Margin="4 0 0 0" Foreground="DarkBlue"
+                              SelectionChanged="comboboxCatalogs_SelectionChanged" TabIndex="3">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Margin="4 0 0 0 "/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <TextBlock Grid.Row="0" Grid.Column="5" Text="Media"/>
+                    <ComboBox Grid.Row="1" Grid.Column="5" x:Name="comboboxMedias" Margin="4 0 0 0" Foreground="DarkBlue"
+                              SelectionChanged="comboboxMediass_SelectionChanged" TabIndex="3">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Type}" Margin="4 0 0 0 "/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Album"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" x:Name="textboxAlbum" Height="24" TabIndex="4" VerticalContentAlignment="Center"
+                             Text="{Binding Path=Album}"
+                             TextChanged="Record_TextChanged" LostFocus="textboxAlbum_LostFocus"/>
+                    <TextBlock Grid.Row="0" Grid.Column="1" Text="Artist"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="textboxArtist" TabIndex="5" VerticalContentAlignment="Center"
+                             Text="{Binding Path=Artist}"
+                             TextChanged="Record_TextChanged" LostFocus="textboxArtist_LostFocus"/>
+                </Grid>
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Title"/>
+                    <TextBox Grid.Row="1" Grid.Column="0" x:Name="textboxTitle" Height="24" TabIndex="6"
+                                 Text="{Binding Path=Title}" VerticalContentAlignment="Center"
+                                 TextChanged="Record_TextChanged" LostFocus="textboxTitle_LostFocus"/>
+                </Grid>
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Path"/>
+                    <TextBox Grid.Row="1" x:Name="textboxPath" Height="24" TabIndex="7"
+                                 Text="{Binding Path=Path}" VerticalContentAlignment="Center"
+                                 TextChanged="Record_TextChanged" LostFocus="textboxPath_LostFocus"/>
+                </Grid>
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Text="Filename" Width="78"/>
+                    <TextBox Grid.Row="1" x:Name="textboxFilename" Height="24" TabIndex="8"
+                                 Text="{Binding Path=FileName}" VerticalContentAlignment="Center"
+                                 TextChanged="Record_TextChanged" LostFocus="textboxFilename_LostFocus"/>
+                </Grid>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Content="Save"
-                            Command="{x:Static local:DbRecordEditorCommands.CommandSave}"/>
-                    <Button Content="Cancel" Command="ApplicationCommands.Close"/>
+                            Command="{x:Static local:MyRecordEditorCommands.CommandSave}" TabIndex="9"/>
+                    <Button Content="Cancel" Command="ApplicationCommands.Close" TabIndex="10"/>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
